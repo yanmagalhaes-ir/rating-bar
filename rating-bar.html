@@ -1,0 +1,192 @@
+<link rel="import" href="../polymer/polymer-element.html">
+
+<dom-module id="rating-bar">
+  <template>
+    <style>
+      :host {
+        display: block;
+        width:100%;
+        height:100%;
+      }
+      #ratingbarWrapper{
+          width:100%;
+          height:100%;
+        }
+        .ratingbar-block{
+          display: inline-block;
+          width:30px;
+          height:40px;
+          border-radius: 5px;
+          background: #d8d8d8;
+          margin-right:3px;
+          cursor: pointer;
+          transition: background 0.2s ease-in;
+        }
+        .ratingbar1{
+          background: #f73c2a;
+          transition:background 0.2s ease-out;
+        }
+        .ratingbar2{
+          background: #f75119;
+          transition:background 0.2s ease-out;
+        }
+        .ratingbar3{
+          background: #fa7815;
+          transition:background 0.2s ease-out;
+        }
+        .ratingbar4{
+          background: #fca610;
+          transition:background 0.2s ease-out;
+        }
+        .ratingbar5{
+          background: #f9c70d;
+          transition:background 0.2s ease-out;
+        }
+        .ratingbar6{
+          background: #90cc10;
+          transition:background 0.2s ease-out;
+        }
+        .ratingbar7{
+          background: #93cc19;
+          transition:background 0.2s ease-out;
+        }
+        .ratingbar8{
+          background: #44db45;
+          transition:background 0.2s ease-out;
+        }
+        .ratingbar9{
+          background: #1bd113;
+          transition:background 0.2s ease-out;
+        }
+    </style>
+    <div id="ratingbarWrapper">
+
+    </div>
+  </template>
+
+  <script>
+    /**
+     * `rating-bar`
+     * a hybrid polymer element containing rating bars (polymer 1.0+ and polymer 2.0+ compatible)
+     *
+     * @customElement
+     * @polymer
+     * @demo demo/index.html
+     */
+
+    Polymer({
+
+      is: 'rating-bar',
+
+      properties: {
+
+      rating: {
+        type: Number,
+        reflectToAttribute:true,
+        notify:true,
+      },
+      ratingType:{
+        type:String,
+        notify:true,
+        observer: '_changedRatingType'
+      },
+      orderItem:{
+        type:Object,
+      },
+      disabled:{
+        type:Boolean,
+        value:false
+      }
+
+    },
+
+    attached: function() {
+      for (var i = 1; i <= 9; i++) {
+        var newElement = document.createElement('span');
+        newElement.classList.add('ratingbar-block');
+        // newElement.classList.add('ratingbar' + i);
+        newElement.setAttribute('data-id', i);
+        // newElement.addEventListener('mouseover',this._onMouseOver);
+        // newElement.addEventListener('mouseout',this._onMouseOut);
+        if(!this.disabled){
+          newElement.addEventListener('click', this._onRatingBarTap.bind(this));
+          newElement.addEventListener("transitionend", this._transitionEndFunction, false);
+          newElement.addEventListener("webkitTransitionEnd", this._transitionEndFunction, false);
+          newElement.addEventListener("mozTransitionEnd", this._transitionEndFunction, false);
+          newElement.addEventListener("msTransitionEnd", this._transitionEndFunction, false);
+          newElement.addEventListener("oTransitionEnd", this._transitionEndFunction, false);
+        }
+        this.$.ratingbarWrapper.appendChild(newElement);
+      }
+      if(this.rating > 0){
+        this._fillPredefinedRating();
+      }
+    },
+
+    _onMouseOver: function(e) {
+      var limit = e.target.getAttribute('data-id');
+      var siblingNodes = e.target.parentNode.childNodes;
+      for (var i = 1; i <= limit; i++) {
+        siblingNodes[i].classList.add('ratingbar' + i);
+      }
+
+    },
+
+    _onMouseOut: function(e) {
+      var limit = e.target.getAttribute('data-id');
+      var siblingNodes = e.target.parentNode.childNodes;
+      for (var i = 1; i <= limit; i++) {
+        siblingNodes[i].classList.remove('ratingbar' + i);
+      }
+
+    },
+
+    _onRatingBarTap: function(e) {
+      var limit = e.target.getAttribute('data-id');
+      var siblingNodes = e.target.parentNode.childNodes;
+      for (var i = 1; i <= 9; i++) {
+        siblingNodes[i].classList.remove('ratingbar' + i);
+      }
+
+      for (var i = 1; i <= limit; i++) {
+        siblingNodes[i].classList.add('ratingbar' + i);
+      }
+
+      var ratingcard = [1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5];
+      if(this.ratingType === 'individual'){
+        this.set('indrating', ratingcard[limit - 1]);
+        if(this.orderItem){
+          this.orderItem.rating = ratingcard[limit - 1];
+        }
+        this.fire('individual-rating-selected',this.orderItem);
+      }
+      else{
+        this.set('rating', ratingcard[limit - 1]);
+      }
+        this.fire('rating-changed',this.rating);
+    },
+
+    _fillPredefinedRating: function(){
+      var ratingcard = [1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5];
+      var limit = ratingcard.indexOf(this.rating) + 1;
+      var siblingNodes = this.$.ratingbarWrapper.childNodes;
+      for (var i = 1; i <= 9; i++) {
+        siblingNodes[i].classList.remove('ratingbar' + i);
+      }
+
+      for (var i = 1; i <= limit; i++) {
+        siblingNodes[i].classList.add('ratingbar' + i);
+      }
+    },
+
+    _changedRatingType: function(e){
+      // console.log('_changedRatingType',e);
+    },
+
+    _transitionEndFunction: function(){
+      // console.log('_transitionEndFunction');
+    }
+
+    });
+  </script>
+</dom-module>

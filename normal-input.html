@@ -1,0 +1,25 @@
+<link rel="import" href="bower_components/polymer/polymer.html">
+
+<dom-module id="normal-input">
+
+  <template>
+    <p>[[textComponent]]</p>
+  </template>
+
+  <script>
+    (function () {
+      'use strict';
+
+      Polymer({
+        is: 'normal-input',
+
+        properties: {
+          textComponent: {
+            type: String,
+            value: 'HEEELOOOOO V1'
+          }
+        }
+      });
+    })();
+  </script>
+</dom-module>
